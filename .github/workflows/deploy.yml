@@ -1,0 +1,23 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    env:
+      OWNER: rendau
+      IMAGE: keycloak
+      IMAGE_TAG: 20
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $ --password-stdin
+
+      - run: docker build -t ghcr.io/$OWNER/$IMAGE:$IMAGE_TAG .
+
+      - run: docker push ghcr.io/$OWNER/$IMAGE:$IMAGE_TAG
